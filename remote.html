@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Remote — Carlota</title>
+<link href="https://fonts.googleapis.com/css2?family=Fragment+Mono&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  @font-face {
+    font-family: 'SF Pro Display';
+    src: local('SF Pro Display'), local('SFProDisplay-Regular'), local('.SFNSDisplay');
+    font-weight: 400;
+  }
+  @font-face {
+    font-family: 'SF Pro Display';
+    src: local('SF Pro Display Bold'), local('SFProDisplay-Bold'), local('.SFNSDisplay-Bold');
+    font-weight: 700;
+  }
+  :root {
+    --sf: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    --mono: 'Fragment Mono', 'SF Mono', monospace;
+    --bg: #EDEAE3;
+    --text: #111;
+    --orange: #F04E0C;
+    --muted: #6b6b6b;
+    --border: rgba(0,0,0,0.10);
+    --r: 14px;
+    --max: 1120px;
+    --pad: clamp(20px, 3vw, 48px);
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* NAV */
+  nav {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 28px var(--pad) 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-back {
+    font-size: 11px; color: var(--muted); text-decoration: none;
+    display: flex; align-items: center; gap: 5px; transition: color .2s;
+  }
+  .nav-back:hover { color: var(--text); }
+
+  /* HERO */
+  .hero {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: clamp(40px,6vw,72px) var(--pad) 0;
+  }
+  .eyebrow {
+    font-size: 11px; letter-spacing: .5px; color: var(--orange);
+    text-transform: uppercase; margin-bottom: 18px;
+  }
+  .title {
+    font-family: var(--sf); font-weight: 700;
+    font-size: clamp(34px, 5.5vw, 62px);
+    line-height: 1.06; letter-spacing: -1.8px;
+    color: var(--text); max-width: 720px; margin-bottom: 40px;
+  }
+
+  /* STATS */
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 0; margin-bottom: clamp(40px,6vw,72px);
+  }
+  .stat { padding: 0 24px; border-right: 1px solid var(--border); }
+  .stat:first-child { padding-left: 0; }
+  .stat:last-child { border-right: none; }
+  .stat-val {
+    font-family: var(--sf); font-weight: 700;
+    font-size: clamp(22px,3.5vw,38px); letter-spacing: -1px;
+    color: var(--text); line-height: 1; margin-bottom: 6px;
+  }
+  .stat-lbl { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+  /* SECTION WRAPPER */
+  .section {
+    max-width: var(--max); margin: 0 auto;
+    padding: clamp(40px,6vw,72px) var(--pad);
+  }
+
+  .label {
+    font-size: 10px; letter-spacing: .8px; text-transform: uppercase;
+    color: var(--orange); margin-bottom: 16px;
+  }
+  .heading {
+    font-family: var(--sf); font-weight: 700;
+    font-size: clamp(20px,2.5vw,28px); letter-spacing: -.5px;
+    color: var(--text); margin-bottom: 16px;
+  }
+  .prose {
+    font-size: 13px; line-height: 1.85; color: var(--muted);
+  }
+  .prose + .prose { margin-top: 12px; }
+
+  /* TWO COL */
+  .two-col {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: clamp(24px,3vw,56px); align-items: start;
+  }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* DIVIDER */
+  .divider {
+    max-width: var(--max); margin: 0 auto;
+    border: none; border-top: 1px solid var(--border);
+  }
+
+  /* CHIPS / TAGS */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .chip {
+    font-size: 11px; padding: 5px 12px;
+    background: rgba(0,0,0,0.06); border-radius: 40px;
+    color: var(--muted);
+  }
+
+  /* NUMBERED LIST */
+  .num-list { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+  .num-item {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 16px 18px;
+    background: rgba(0,0,0,0.04);
+    border-radius: 10px;
+  }
+  .num-badge {
+    font-family: var(--sf); font-weight: 700; font-size: 12px;
+    color: var(--orange); min-width: 24px; padding-top: 1px;
+  }
+  .num-text { font-size: 13px; line-height: 1.65; color: var(--muted); }
+  .num-text strong { font-family: var(--sf); font-weight: 700; color: var(--text); display: block; margin-bottom: 2px; }
+
+  /* ITERATION LIST */
+  .iter-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .iter-row {
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 18px;
+    background: rgba(0,0,0,0.04);
+    border-radius: 10px;
+  }
+  .iter-n {
+    font-family: var(--sf); font-weight: 700; font-size: 12px;
+    color: var(--orange); min-width: 22px;
+  }
+  .iter-name { font-family: var(--sf); font-size: 13px; color: var(--text); flex: 1; }
+  .iter-out { font-size: 12px; color: var(--muted); }
+
+  /* GOAL CALLOUT */
+  .callout {
+    background: #F04E0C;
+    border-radius: var(--r);
+    padding: clamp(28px,4vw,48px);
+    margin-top: 20px;
+  }
+  .callout p {
+    font-family: var(--sf); font-weight: 700;
+    font-size: clamp(20px, 2.5vw, 30px);
+    line-height: 1.2; letter-spacing: -0.5px;
+    color: #fff;
+  }
+
+  /* FOOTER */
+  footer {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 48px var(--pad);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-copy { font-size: 11px; color: var(--muted); }
+  .footer-next {
+    font-size: 11px; color: var(--muted); text-decoration: none;
+    display: flex; align-items: center; gap: 5px; transition: color .2s;
+  }
+  .footer-next:hover { color: var(--text); }
+
+  @media (max-width: 720px) {
+    .stats { grid-template-columns: repeat(2, 1fr); gap: 0; }
+    .stat { border-right: none; border-bottom: 1px solid var(--border); padding: 16px 0; }
+    .stat:nth-child(odd) { border-right: 1px solid var(--border); padding-right: 16px; }
+    .stat:last-child, .stat:nth-last-child(2):nth-child(odd) { border-bottom: none; }
+    .iter-out { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-back" href="index.html">← Back</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="eyebrow">Case Study · Remote</div>
+  <div class="title">90-minute HR cycles, down to 12.</div>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-val">358→0</div>
+      <div class="stat-lbl">Support tickets for bulk amendments</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">−87%</div>
+      <div class="stat-lbl">Time to amend 25 employees</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">72%</div>
+      <div class="stat-lbl">Feature adoption among eligible orgs</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">+38 NPS</div>
+      <div class="stat-lbl">Net Promoter Score for the feature</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTEXT -->
+<div class="section">
+  <div class="two-col">
+    <div>
+      <div class="label">Context</div>
+      <div class="heading">One system for five product areas. No tooling existed.</div>
+    </div>
+    <div>
+      <p class="prose">Remote helps companies hire and pay global teams across 180+ countries. Enterprise HR operators needed to run bulk salary cycles, contract amendments, and location changes — but were doing it manually, one employee at a time, using spreadsheets.</p>
+      <p class="prose">I was Design Lead for a shared bulk-upload framework covering five distinct product areas: Global Payroll, Employee Lifecycle, HRIS, EOR onboarding, and Contractor Invoices.</p>
+    </div>
+  </div>
+  <div style="margin-top: 40px; background:#E6E3DE; border-radius:var(--r); padding:clamp(16px,2vw,28px);">
+    <img src="Team.jpg" alt="Remote team page" style="width:100%;display:block;border-radius:calc(var(--r) - 4px);"/>
+  </div>
+</div>
+
+<!-- PROBLEMS -->
+<div class="section">
+  <div class="two-col">
+    <div>
+      <div class="label">Problems</div>
+      <div class="heading">Four blockers preventing a core enterprise workflow.</div>
+    </div>
+    <div>
+      <div class="num-list">
+        <div class="num-item">
+          <span class="num-badge">01</span>
+          <p class="num-text"><strong>No path for scale</strong>One-by-one manual edits were the only option. For teams managing hundreds of employees across countries, it was a hard blocker.</p>
+        </div>
+        <div class="num-item">
+          <span class="num-badge">02</span>
+          <p class="num-text"><strong>Missing feature</strong>Competitors supported bulk updates. It was becoming a reason not to renew.</p>
+        </div>
+        <div class="num-item">
+          <span class="num-badge">03</span>
+          <p class="num-text"><strong>Hidden compliance rules</strong>Country-specific constraints — wage floors, consent laws, works councils — weren't visible at point of action. Users discovered them by failing.</p>
+        </div>
+        <div class="num-item">
+          <span class="num-badge">04</span>
+          <p class="num-text"><strong>Fear of error</strong>A wrong bulk edit can affect payroll across dozens of employees in multiple jurisdictions. Operators avoided the action entirely.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- GOAL -->
+<div class="section">
+  <div class="two-col">
+    <div>
+      <div class="label">Goal</div>
+      <div class="heading">One north star.</div>
+    </div>
+    <div>
+      <div class="callout">
+        <p>Create a safe, efficient, scalable way to manage bulk uploads.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- RESEARCH -->
+<div class="section">
+  <div class="two-col">
+    <div>
+      <div class="label">Research</div>
+      <div class="heading">I talked to HR teams and the people who cleaned up after them.</div>
+    </div>
+    <div>
+      <p class="prose">I interviewed HR operators and Legal and Payroll — the teams who owned the downstream consequences of every bulk action. That perspective changed the entire problem definition.</p>
+      <div class="num-list" style="margin-top: 20px;">
+        <div class="num-item">
+          <span class="num-badge">01</span>
+          <p class="num-text">85% of users ran mass salary or title updates at least bi-annually. This was a core workflow with no product support.</p>
+        </div>
+        <div class="num-item">
+          <span class="num-badge">02</span>
+          <p class="num-text">Most were already using spreadsheets as a workaround — they weren't asking for something new, just for the product to catch up.</p>
+        </div>
+        <div class="num-item">
+          <span class="num-badge">03</span>
+          <p class="num-text">Fear of compliance errors — not usability — was the primary reason operators avoided bulk changes. The problem was trust.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- PROCESS -->
+<div class="section">
+  <div class="two-col">
+    <div>
+      <div class="label">Design process</div>
+      <div class="heading">Five iterations. Each one answered a specific question.</div>
+    </div>
+    <div>
+      <p class="prose">I shipped the simplest version that could produce real user data, measured where it failed, and iterated from there.</p>
+      <div class="iter-list">
+        <div class="iter-row">
+          <span class="iter-n">01</span>
+          <span class="iter-name">CSV upload</span>
+          <span class="iter-out">40% drop-off</span>
+        </div>
+        <div class="iter-row">
+          <span class="iter-n">02</span>
+          <span class="iter-name">CSV + real-time validations</span>
+          <span class="iter-out">Drop-off → 12%</span>
+        </div>
+        <div class="iter-row">
+          <span class="iter-n">03</span>
+          <span class="iter-name">Inline table editor</span>
+          <span class="iter-out">90% user preference</span>
+        </div>
+        <div class="iter-row">
+          <span class="iter-n">04</span>
+          <span class="iter-name">Before/after diff preview</span>
+          <span class="iter-out">Confident decisions</span>
+        </div>
+        <div class="iter-row" style="background: rgba(240,78,12,0.08);">
+          <span class="iter-n">05</span>
+          <span class="iter-name">Undo window + audit log</span>
+          <span class="iter-out">Full trust loop closed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top: 40px; display:flex; flex-direction:column; gap:12px;">
+    <div style="background:#E6E3DE; border-radius:var(--r); padding:clamp(16px,2vw,28px);">
+      <img src="Adding two files.png" alt="Adding two files" style="width:100%;display:block;border-radius:calc(var(--r) - 4px);"/>
+    </div>
+    <div style="background:#E6E3DE; border-radius:var(--r); padding:clamp(16px,2vw,28px);">
+      <img src="Map fields.png" alt="Map fields" style="width:100%;display:block;border-radius:calc(var(--r) - 4px);"/>
+    </div>
+    <div style="background:#E6E3DE; border-radius:var(--r); padding:clamp(16px,2vw,28px);">
+      <img src="Bulk errors.png" alt="Bulk errors" style="width:100%;display:block;border-radius:calc(var(--r) - 4px);"/>
+    </div>
+    <div style="background:#E6E3DE; border-radius:var(--r); padding:clamp(16px,2vw,28px);">
+      <img src="Bulk errors 2.png" alt="Bulk errors 2" style="width:100%;display:block;border-radius:calc(var(--r) - 4px);"/>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- FINAL DESIGN -->
+<div class="section">
+  <div class="two-col">
+    <div>
+      <div class="label">Final design</div>
+      <div class="heading">One framework. Five use cases. Zero guesswork at point of action.</div>
+    </div>
+    <div>
+      <p class="prose">The final design combines multi-format input (CSV, Excel, or manual) with built-in compliance guardrails, a real-time inline editor, and a complete audit trail.</p>
+      <div class="num-list" style="margin-top: 20px;">
+        <div class="num-item">
+          <span class="num-badge">↳</span>
+          <p class="num-text"><strong>Inline editor with smart constraints</strong>Inputs restrict illegal values per country — rules enforced before submission, not discovered after.</p>
+        </div>
+        <div class="num-item">
+          <span class="num-badge">↳</span>
+          <p class="num-text"><strong>Real-time compliance validation</strong>Country-specific rules surface inline. Errors become design problems, not support tickets.</p>
+        </div>
+        <div class="num-item">
+          <span class="num-badge">↳</span>
+          <p class="num-text"><strong>Before/after diff preview</strong>Users see exactly what they're committing to — critical for irreversible bulk actions.</p>
+        </div>
+        <div class="num-item">
+          <span class="num-badge">↳</span>
+          <p class="num-text"><strong>24h undo + full audit log</strong>Recovery path for mistakes, plus the accountability layer enterprise contracts require.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-copy">Carlota · Design Portfolio</span>
+  <a href="typeform.html" class="footer-next">Next project →</a>
+</footer>
+
+</body>
+</html>
