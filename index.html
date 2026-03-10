@@ -89,7 +89,12 @@
     padding: 0 var(--pad) clamp(60px, 8vw, 120px);
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-    gap: 12px;
+    gap: 12px 12px;
+  }
+
+  @media (max-width: 600px) {
+    .projects {
+      gap: 32px 12px;
   }
 
   /* ── CARD ── */
